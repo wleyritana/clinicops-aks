@@ -33,7 +33,6 @@ spec:
                 secretKeyRef:
                   name: voice-secrets
                   key: ORCHESTRATOR_API_KEY
-            # Optional: force OpenAI-only STT/TTS for consistent behavior
             - name: STT_PROVIDER
               value: "openai"
             - name: OPENAI_TTS_MODEL
