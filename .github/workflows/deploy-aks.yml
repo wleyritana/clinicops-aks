@@ -39,7 +39,7 @@ jobs:
         run: |
           ACR_NAME="$(echo "$ACR_LOGIN_SERVER" | cut -d. -f1)"
           echo "Logging into ACR: $ACR_NAME"
-          az acr login --name "$ACR_NAME"
+          az acr login --name "{{secrets.ACR_NAME}}"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
