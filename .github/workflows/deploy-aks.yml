@@ -39,7 +39,7 @@ jobs:
       - name: Login to ACR
         shell: bash
         run: |
-          az acr login --name $ACR_Name
+          az acr login --name $ACR_NAME
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
