@@ -70,12 +70,14 @@ jobs:
         uses: azure/setup-kubectl@v4
 
       - name: Deploy to AKS (kustomize)
+        shell: bash
         run: |
           cd clinicops-yaml
 
-          kustomize edit set image $ACR_LOGIN_SERVER/$IMG_VOICE_API=$ACR_LOGIN_SERVER/$IMG_VOICE_API:${{ steps.vars.outputs.TAG }}
-          kustomize edit set image $ACR_LOGIN_SERVER/$IMG_MCP_ADAPTER=$ACR_LOGIN_SERVER/$IMG_MCP_ADAPTER:${{ steps.vars.outputs.TAG }}
-          kustomize edit set image $ACR_LOGIN_SERVER/$IMG_MCP_ORCHESTRATOR=$ACR_LOGIN_SERVER/$IMG_MCP_ORCHESTRATOR:${{ steps.vars.outputs.TAG }}
+          # Update images to the new tag (commit SHA)
+          kustomize edit set image voice-api=${{ secrets.ACR_LOGIN_SERVER }}/voice-api:${{ steps.vars.outputs.TAG }}
+          kustomize edit set image mcp-adapter=${{ secrets.ACR_LOGIN_SERVER }}/mcp-adapter:${{ steps.vars.outputs.TAG }}
+          kustomize edit set image mcp-orchestrator=${{ secrets.ACR_LOGIN_SERVER }}/mcp-orchestrator:${{ steps.vars.outputs.TAG }}
 
           kubectl apply -k .
 
