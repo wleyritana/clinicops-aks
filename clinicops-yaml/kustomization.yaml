@@ -4,10 +4,7 @@ kind: Kustomization
 namespace: clinicops
 
 resources:
-  - voice-api-deployment.yaml
-  - voice-api-service.yaml
-  - mcp-adapter-deployment.yaml
-  - mcp-adapter-service.yaml
-  - mcp-orchestrator-deployment.yaml
-  - mcp-orchestrator-service.yaml
-  - ingress.yaml
+  - 01-mcp-orchestrator.yaml
+  - 02-mcp-adapter.yaml
+  - 03-voice-api.yaml
+  - 04-ingress.yaml
