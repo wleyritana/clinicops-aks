@@ -31,5 +31,4 @@ spec:
           service:
             name: voice-api
             port:
->>>>>>> 36e5237e7bffa008bd28b6e3306650c9ec2bb671
               number: 80
