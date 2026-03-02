@@ -1,3 +1,3 @@
 # clinicops-aks
 # by: wilfredo leyritana
-# clinicops ai via Azure Kubernetes / GitHub CICD / Pyhton / OpenAI / Voice
+# clinicops ai via Azure Kubernetes / GitHub CICD / Pyhton / OpenAI / Voice / STT-TTS / MCP
