@@ -1,1 +1,98 @@
+name: Build and Deploy ClinicOps to AKS
 
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  ACR_NAME: ${{ secrets.ACR_NAME }}
+  ACR_LOGIN_SERVER: ${{ secrets.ACR_NAME }}.azurecr.io
+  AKS_RG: ${{ secrets.AKS_RG }}
+  AKS_NAME: ${{ secrets.AKS_NAME }}
+  K8S_NAMESPACE: ${{ secrets.K8S_NAMESPACE }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Login to Azure using Service Principal
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+      # Login to Azure Container Registry
+      - name: Docker login to ACR
+        run: |
+          az acr login --name $ACR_NAME
+
+      # Set image tag as commit SHA
+      - name: Set image tag
+        id: vars
+        run: echo "TAG=${GITHUB_SHA}" >> $GITHUB_OUTPUT
+
+      ###################################
+      # Build and Push voice-api
+      ###################################
+      - name: Build & push voice-api
+        run: |
+          docker build -t $ACR_LOGIN_SERVER/voice-api:${{ steps.vars.outputs.TAG }} ./voice-api
+          docker push $ACR_LOGIN_SERVER/voice-api:${{ steps.vars.outputs.TAG }}
+
+      ###################################
+      # Build and Push mcp-adapter
+      ###################################
+      - name: Build & push mcp-adapter
+        run: |
+          docker build -t $ACR_LOGIN_SERVER/mcp-adapter:${{ steps.vars.outputs.TAG }} ./mcp-adapter
+          docker push $ACR_LOGIN_SERVER/mcp-adapter:${{ steps.vars.outputs.TAG }}
+
+      ###################################
+      # Build and Push mcp-orchestrator
+      ###################################
+      - name: Build & push mcp-orchestrator
+        run: |
+          docker build -t $ACR_LOGIN_SERVER/mcp-orchestrator:${{ steps.vars.outputs.TAG }} ./mcp-orchestrator
+          docker push $ACR_LOGIN_SERVER/mcp-orchestrator:${{ steps.vars.outputs.TAG }}
+
+      ###################################
+      # Set AKS context
+      ###################################
+      - name: Set AKS context
+        uses: azure/aks-set-context@v4
+        with:
+          resource-group: ${{ env.AKS_RG }}
+          cluster-name: ${{ env.AKS_NAME }}
+
+      ###################################
+      # Deploy updated images
+      ###################################
+      - name: Update deployments
+        run: |
+          kubectl -n $K8S_NAMESPACE set image deployment/voice-api \
+            voice-api=$ACR_LOGIN_SERVER/voice-api:${{ steps.vars.outputs.TAG }}
+
+          kubectl -n $K8S_NAMESPACE set image deployment/mcp-adapter \
+            mcp-adapter=$ACR_LOGIN_SERVER/mcp-adapter:${{ steps.vars.outputs.TAG }}
+
+          kubectl -n $K8S_NAMESPACE set image deployment/mcp-orchestrator \
+            mcp-orchestrator=$ACR_LOGIN_SERVER/mcp-orchestrator:${{ steps.vars.outputs.TAG }}
+
+      ###################################
+      # Wait for rollout
+      ###################################
+      - name: Wait for rollout
+        run: |
+          kubectl -n $K8S_NAMESPACE rollout status deployment/voice-api --timeout=180s
+          kubectl -n $K8S_NAMESPACE rollout status deployment/mcp-adapter --timeout=180s
+          kubectl -n $K8S_NAMESPACE rollout status deployment/mcp-orchestrator --timeout=180s
