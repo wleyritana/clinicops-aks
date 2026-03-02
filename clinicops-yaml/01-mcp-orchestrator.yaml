@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -42,3 +43,50 @@ spec:
   ports:
   - port: 8080
     targetPort: 8080
+=======
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-orchestrator
+  namespace: clinicops
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mcp-orchestrator
+  template:
+    metadata:
+      labels:
+        app: mcp-orchestrator
+    spec:
+      containers:
+      - name: mcp-orchestrator
+        image: clinicopsacr.azurecr.io/mcp-orchestrator:1.0
+        ports:
+        - containerPort: 8080
+        env:
+        - name: PORT
+          value: "8080"
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: voice-secrets
+              key: OPENAI_API_KEY
+        - name: OPENAI_MODEL
+          value: "gpt-4.1-mini"
+        - name: CLINICOPS_PROMPT_PROFILE
+          value: "hospital"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mcp-orchestrator
+  namespace: clinicops
+spec:
+  selector:
+    app: mcp-orchestrator
+  ports:
+  - port: 8080
+
+    targetPort: 8080
+>>>>>>> 36e5237e7bffa008bd28b6e3306650c9ec2bb671

@@ -8,7 +8,11 @@ resources:
   - 02-mcp-adapter.yaml
   - 03-voice-api.yaml
   - 04-ingress.yaml
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> 36e5237e7bffa008bd28b6e3306650c9ec2bb671
 images:
   - name: clinicopsacr.azurecr.io/voice-api
     newTag: "1.0"
@@ -16,3 +20,7 @@ images:
     newTag: "1.0"
   - name: clinicopsacr.azurecr.io/mcp-orchestrator
     newTag: "1.0"
+<<<<<<< HEAD
+=======
+
+>>>>>>> 36e5237e7bffa008bd28b6e3306650c9ec2bb671

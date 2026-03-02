@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -14,4 +15,22 @@ spec:
           service:
             name: voice-api
             port:
+=======
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: voice-api-ingress
+  namespace: clinicops
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: voice-api
+            port:
+>>>>>>> 36e5237e7bffa008bd28b6e3306650c9ec2bb671
               number: 80
