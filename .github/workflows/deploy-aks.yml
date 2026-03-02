@@ -39,8 +39,6 @@ jobs:
       - name: Login to ACR
         shell: bash
         run: |
-          ACR_NAME="$(echo "$ACR_NAME" | cut -d. -f1)"
-          echo "Logging into ACR: $ACR_NAME"
           az acr login --name "{{secrets.ACR_NAME}}"
 
       - name: Set up Docker Buildx
