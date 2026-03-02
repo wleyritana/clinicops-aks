@@ -1,4 +1,4 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
+piVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 namespace: clinicops
@@ -8,3 +8,11 @@ resources:
   - 02-mcp-adapter.yaml
   - 03-voice-api.yaml
   - 04-ingress.yaml
+
+images:
+  - name: clinicopsacr.azurecr.io/voice-api
+    newTag: "1.0"
+  - name: clinicopsacr.azurecr.io/mcp-adapter
+    newTag: "1.0"
+  - name: clinicopsacr.azurecr.io/mcp-orchestrator
+    newTag: "1.0"
