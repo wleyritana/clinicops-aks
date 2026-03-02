@@ -14,31 +14,31 @@ spec:
         app: voice-api
     spec:
       containers:
-      - name: voice-api
-        image: clinicopsacr.azurecr.io/voice-api:1.0
-        ports:
-        - containerPort: 8080
-        env:
-        - name: PORT
-          value: "8080"
-        - name: OPENAI_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: voice-secrets
-              key: OPENAI_API_KEY
-        - name: ORCHESTRATOR_URL
-          value: "http://mcp-adapter:8080/canonical/voice"
-        - name: ORCHESTRATOR_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: voice-secrets
-              key: ORCHESTRATOR_API_KEY
-        # Optional: force OpenAI-only STT/TTS if you want consistent behavior
-        - name: STT_PROVIDER
-          value: "openai"
-        - name: OPENAI_TTS_MODEL
-          value: "gpt-4o-mini-tts"
-
+        - name: voice-api
+          image: clinicopsacr.azurecr.io/voice-api:1.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: voice-secrets
+                  key: OPENAI_API_KEY
+            - name: ORCHESTRATOR_URL
+              value: "http://mcp-adapter:8080/canonical/voice"
+            - name: ORCHESTRATOR_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: voice-secrets
+                  key: ORCHESTRATOR_API_KEY
+            # Optional: force OpenAI-only STT/TTS for consistent behavior
+            - name: STT_PROVIDER
+              value: "openai"
+            - name: OPENAI_TTS_MODEL
+              value: "gpt-4o-mini-tts"
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -48,57 +48,5 @@ spec:
   selector:
     app: voice-api
   ports:
-  - port: 80
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: voice-api
-  namespace: clinicops
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: voice-api
-  template:
-    metadata:
-      labels:
-        app: voice-api
-    spec:
-      containers:
-      - name: voice-api
-        image: clinicopsacr.azurecr.io/voice-api:1.0
-        ports:
-        - containerPort: 8080
-        env:
-        - name: PORT
-          value: "8080"
-        - name: OPENAI_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: voice-secrets
-              key: OPENAI_API_KEY
-        - name: ORCHESTRATOR_URL
-          value: "http://mcp-adapter:8080/canonical/voice"
-        - name: ORCHESTRATOR_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: voice-secrets
-              key: ORCHESTRATOR_API_KEY
-        # Optional: force OpenAI-only STT/TTS if you want consistent behavior
-        - name: STT_PROVIDER
-          value: "openai"
-        - name: OPENAI_TTS_MODEL
-          value: "gpt-4o-mini-tts"
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: voice-api
-  namespace: clinicops
-spec:
-  selector:
-    app: voice-api
-  ports:
-  - port: 80
-    targetPort: 8080
+    - port: 80
+      targetPort: 8080
