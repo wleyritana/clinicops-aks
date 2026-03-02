@@ -1,6 +1,8 @@
 # ClinicOps AI
 # March 1, 2026 by leyritana.jun.se@icloud.com Stockholm, Sweden
 
+## Project Summary
+
 ClinicOps AI is a Kubernetes-ready healthcare operations platform
 designed to streamline clinic workflows, automate operational processes,
 and integrate intelligent services across clinical systems.
