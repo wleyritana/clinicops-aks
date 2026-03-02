@@ -9,12 +9,10 @@ permissions:
   contents: read
 
 env:
-  # ACR + AKS
   ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}   # e.g. clinicopsacr.azurecr.io
   AKS_RESOURCE_GROUP: ${{ secrets.AKS_RESOURCE_GROUP }} # e.g. clinicops-rg
   AKS_CLUSTER_NAME: ${{ secrets.AKS_CLUSTER_NAME }}     # e.g. clinicops-aks
 
-  # Image names in ACR
   IMG_VOICE_API: voice-api
   IMG_MCP_ADAPTER: mcp-adapter
   IMG_MCP_ORCHESTRATOR: mcp-orchestrator
@@ -27,7 +25,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # ✅ NEW login format: uses the single AZURE_CREDENTIALS JSON secret
       - name: Azure Login
         uses: azure/login@v2
         with:
@@ -38,36 +35,30 @@ jobs:
         run: echo "TAG=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
       - name: Login to ACR
-        run: az acr login --name "${{ env.ACR_LOGIN_SERVER%%.* }}"
+        shell: bash
+        run: |
+          ACR_NAME="$(echo "$ACR_LOGIN_SERVER" | cut -d. -f1)"
+          echo "Logging into ACR: $ACR_NAME"
+          az acr login --name "$ACR_NAME"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # -----------------------------
-      # Build & push voice-api
-      # -----------------------------
       - name: Build & push voice-api
         run: |
           docker build -t $ACR_LOGIN_SERVER/$IMG_VOICE_API:${{ steps.vars.outputs.TAG }} ./voice-api
           docker push $ACR_LOGIN_SERVER/$IMG_VOICE_API:${{ steps.vars.outputs.TAG }}
 
-      # -----------------------------
-      # Build & push mcp-adapter
-      # -----------------------------
       - name: Build & push mcp-adapter
         run: |
           docker build -t $ACR_LOGIN_SERVER/$IMG_MCP_ADAPTER:${{ steps.vars.outputs.TAG }} ./mcp-adapter
           docker push $ACR_LOGIN_SERVER/$IMG_MCP_ADAPTER:${{ steps.vars.outputs.TAG }}
 
-      # -----------------------------
-      # Build & push mcp-orchestrator
-      # -----------------------------
       - name: Build & push mcp-orchestrator
         run: |
           docker build -t $ACR_LOGIN_SERVER/$IMG_MCP_ORCHESTRATOR:${{ steps.vars.outputs.TAG }} ./mcp-orchestrator
           docker push $ACR_LOGIN_SERVER/$IMG_MCP_ORCHESTRATOR:${{ steps.vars.outputs.TAG }}
 
-      # Get kubeconfig for AKS
       - name: Get AKS credentials
         run: |
           az aks get-credentials \
@@ -75,16 +66,13 @@ jobs:
             --name "$AKS_CLUSTER_NAME" \
             --overwrite-existing
 
-      # Install kubectl (usually already present, but safe)
       - name: Setup kubectl
         uses: azure/setup-kubectl@v4
 
-      # Deploy using kustomize by updating images to the new tag
       - name: Deploy to AKS (kustomize)
         run: |
           cd clinicops-yaml
 
-          # Update image tags in kustomization.yaml (expects images are declared there)
           kustomize edit set image $ACR_LOGIN_SERVER/$IMG_VOICE_API=$ACR_LOGIN_SERVER/$IMG_VOICE_API:${{ steps.vars.outputs.TAG }}
           kustomize edit set image $ACR_LOGIN_SERVER/$IMG_MCP_ADAPTER=$ACR_LOGIN_SERVER/$IMG_MCP_ADAPTER:${{ steps.vars.outputs.TAG }}
           kustomize edit set image $ACR_LOGIN_SERVER/$IMG_MCP_ORCHESTRATOR=$ACR_LOGIN_SERVER/$IMG_MCP_ORCHESTRATOR:${{ steps.vars.outputs.TAG }}
