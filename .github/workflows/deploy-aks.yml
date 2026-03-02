@@ -10,8 +10,10 @@ permissions:
 
 env:
   ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}   # e.g. clinicopsacr.azurecr.io
+  ACR_NAME: ${{ secrets.ACR_NAME }}     # e.g. clinicopsacr
   AKS_RESOURCE_GROUP: ${{ secrets.AKS_RESOURCE_GROUP }} # e.g. clinicops-rg
   AKS_CLUSTER_NAME: ${{ secrets.AKS_CLUSTER_NAME }}     # e.g. clinicops-aks
+  
 
   IMG_VOICE_API: voice-api
   IMG_MCP_ADAPTER: mcp-adapter
@@ -37,7 +39,7 @@ jobs:
       - name: Login to ACR
         shell: bash
         run: |
-          ACR_NAME="$(echo "$ACR_LOGIN_SERVER" | cut -d. -f1)"
+          ACR_NAME="$(echo "$ACR_NAME" | cut -d. -f1)"
           echo "Logging into ACR: $ACR_NAME"
           az acr login --name "{{secrets.ACR_NAME}}"
 
