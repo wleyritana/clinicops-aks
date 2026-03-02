@@ -28,7 +28,7 @@ spec:
             secretKeyRef:
               name: adapter-secrets
               key: API_KEY
----
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -39,7 +39,7 @@ spec:
     app: mcp-adapter
   ports:
   - port: 8080
-=======
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -70,7 +70,7 @@ spec:
             secretKeyRef:
               name: adapter-secrets
               key: API_KEY
----
+
 apiVersion: v1
 kind: Service
 metadata:
