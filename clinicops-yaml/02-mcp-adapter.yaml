@@ -14,21 +14,21 @@ spec:
         app: mcp-adapter
     spec:
       containers:
-      - name: mcp-adapter
-        image: clinicopsacr.azurecr.io/mcp-adapter:1.0
-        ports:
-        - containerPort: 8080
-        env:
-        - name: PORT
-          value: "8080"
-        - name: MCP_URL
-          value: "http://mcp-orchestrator:8080/orchestrate"
-        - name: API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: adapter-secrets
-              key: API_KEY
-
+        - name: mcp-adapter
+          image: clinicopsacr.azurecr.io/mcp-adapter:1.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+            - name: MCP_URL
+              value: "http://mcp-orchestrator:8080/orchestrate"
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: adapter-secrets
+                  key: API_KEY
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -38,47 +38,5 @@ spec:
   selector:
     app: mcp-adapter
   ports:
-  - port: 8080
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: mcp-adapter
-  namespace: clinicops
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: mcp-adapter
-  template:
-    metadata:
-      labels:
-        app: mcp-adapter
-    spec:
-      containers:
-      - name: mcp-adapter
-        image: clinicopsacr.azurecr.io/mcp-adapter:1.0
-        ports:
-        - containerPort: 8080
-        env:
-        - name: PORT
-          value: "8080"
-        - name: MCP_URL
-          value: "http://mcp-orchestrator:8080/orchestrate"
-        - name: API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: adapter-secrets
-              key: API_KEY
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: mcp-adapter
-  namespace: clinicops
-spec:
-  selector:
-    app: mcp-adapter
-  ports:
-  - port: 8080
-    targetPort: 8080
+    - port: 8080
+      targetPort: 8080
