@@ -88,4 +88,3 @@ spec:
   - port: 8080
 
     targetPort: 8080
->>>>>>> 36e5237e7bffa008bd28b6e3306650c9ec2bb671
