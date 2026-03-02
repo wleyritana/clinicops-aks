@@ -30,7 +30,7 @@ spec:
           value: "gpt-4.1-mini"
         - name: CLINICOPS_PROMPT_PROFILE
           value: "hospital"
----
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -42,7 +42,7 @@ spec:
   ports:
   - port: 8080
     targetPort: 8080
-=======
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -75,7 +75,7 @@ spec:
           value: "gpt-4.1-mini"
         - name: CLINICOPS_PROMPT_PROFILE
           value: "hospital"
----
+
 apiVersion: v1
 kind: Service
 metadata:
