@@ -38,7 +38,7 @@ spec:
           value: "openai"
         - name: OPENAI_TTS_MODEL
           value: "gpt-4o-mini-tts"
----
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -49,7 +49,7 @@ spec:
     app: voice-api
   ports:
   - port: 80
-=======
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -90,7 +90,7 @@ spec:
           value: "openai"
         - name: OPENAI_TTS_MODEL
           value: "gpt-4o-mini-tts"
----
+
 apiVersion: v1
 kind: Service
 metadata:
