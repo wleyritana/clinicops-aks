@@ -6,29 +6,12 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: voice-api
-            port:
-
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: voice-api-ingress
-  namespace: clinicops
-spec:
-  ingressClassName: nginx
-  rules:
-  - http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: voice-api
-            port:
-              number: 80
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: voice-api
+                port:
+                  number: 80
